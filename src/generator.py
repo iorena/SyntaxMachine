@@ -32,11 +32,15 @@ class Generator:
 			vp = self.createVerb()
 
 			npp = self.createNounPhrase('obj')
+			advp = ''
  
+			if rnd.randint(0,6) > 3:
+				advp = self.createNounPhrase('adv')
+			
 			if x == 0:
-				sentence += ' '.join((np.word.capitalize(), vp.word, npp.word))
+				sentence += ' '.join((np.capitalize(), vp.word, npp, advp))
 			else:
-				sentence += ' '.join((np.word, vp.word, npp.word))
+				sentence += ' '.join((np, vp.word, npp, advp))
 
 		print sentence	
 
@@ -46,8 +50,12 @@ class Generator:
 		ind = rnd.randint(0, len(self.nouns)-1)
 		word = self.nouns[ind]
 		np = Noun(word, pos, rnd.randint(0, 1)) 
-		if rnd.randint(0, 6) > 3:
-			np = self.createAdjective(np.partOfSpeech, np.plural) + ' ' + np
+		if rnd.randint(0, 6) > 4:
+			np = self.createAdjective(np.partOfSpeech, np.plural).word + ' ' + np.word
+		elif rnd.randint(0, 6) > 3:
+			np = self.createNounPhrase('obj').word + ' ' + np.word
+		else:
+			np = np.word
 
 		return np
 

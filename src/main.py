@@ -2,14 +2,14 @@
 import xml.etree.ElementTree as XML
 from array import array
 from generator import Generator
-
+from dictionary import Dictionary
 
 verbDictionary = []
 nounDictionary = []
 adjectives = []
 newVerbs = []
 nouns = []
-
+dictionary = Dictionary()
 
 def loadDictionary():
 
@@ -27,18 +27,21 @@ def loadDictionary():
 			av = t.find('av').text	 
 
 		word = child.find('s').text
-
+		if word[0] == '-':
+			continue
 		if group < 50:
 			nounDictionary.append((word, group, av))
 		elif group > 51 and group < 77:
 			verbDictionary.append((word, group, av))
-
+		dictionary.putWord(word, group, av)
 
 def wordCompare(word1, word2):
 	i = 0
 	if word1 == word2:
 		return 0
 	for char in list(word1):
+		if char == '-':
+			continue
 		if i >= len(word2):
 			return 1
 		x = ord(char) - ord(word2[i])
@@ -52,8 +55,9 @@ def dictionarySearch(dictionary, word):
 	middleInd = int((len(dictionary)-1) / 2)
 	lowInd = 0
 	while (highInd > lowInd):
-		entry = dictionary[middleInd][0].encode('utf-8')
+		entry = dictionary[middleInd][0]
 		x = wordCompare(entry, word)
+		print 'can\'t find a match ;_; ' + word 
 		if x == 0:
 			print 'found it!'
 			return middleInd
@@ -64,8 +68,11 @@ def dictionarySearch(dictionary, word):
 		middleInd = int((highInd + middleInd) / 2)
 	return -1
 	
-def loadWordClasses():
 
+def loadWordClasses():
+	
+	wordclasses = []
+	classDictionary = Dictionary()
 
 	with open('sanaluokat.txt') as lines:
 		for line in lines:
@@ -73,26 +80,20 @@ def loadWordClasses():
 			word = line[:index]
 			wordc = line[index+1:index+5]
 
-
-			if wordc == "Verb":
-				index = dictionarySearch(verbDictionary, word)
-				if index == -1:
-					continue
-				entry = verbDictionary[index]
-				newVerbs.append((entry[0], entry[1], entry[2], wordc[0]))
-		
-			elif wordc == "Subs":
-				index = dictionarySearch(nounDictionary, word)
-				if index == -1:
-					continue
-				entry = nounDictionary[index]
+			if dictionary.findWord(word):
+				classDictionary.putWord(word, wordc, '')
+				wordclasses.append((word, wordc))	
+			
+	
+	print 'NounDic size: '	+ str(len(nounDictionary))
+	print 'classDic size: ' + str(len(classDictionary.dictionary[4][4]))
+	for entry in nounDictionary:
+			
+		if classDictionary.findWord(entry[0].encode('utf-8')):
+			wordc = classDictionary.getEntry(entry[0].encode('utf-8'))[0]
+			if wordc == 'Subs':
 				nouns.append((entry[0], entry[1], entry[2], wordc[0]))
-
 			elif wordc == "Adje":
-				index = dictionarySearch(nounDictionary, word)
-				if index == -1:
-					continue
-				entry = nounDictionary[index]
 				adjectives.append((entry[0], entry[1], entry[2], wordc[0]))
 		
 
@@ -103,7 +104,7 @@ loadDictionary()
 print 'Loading wiktionary data...'
 loadWordClasses()
 
-g = Generator(newVerbs, nouns, adjectives)
+g = Generator(verbDictionary, nouns, adjectives)
 
 while (1):
 	g.generate()

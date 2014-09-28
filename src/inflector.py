@@ -24,10 +24,12 @@ class Inflector:
 		if word.partOfSpeech == 'subj':
 			return word.word
 
+		word.word = self.av(word.word, self.avRules[word.av])
 		stem = self.stem(word)
 
 		number = ''  # self.numberMorphemes(word[len(word)-1], word.group)
-		case = self.caseMorpheme(self.lastLetter(word.word, 1), word.group, word.vowels)
+		case = self.caseMorpheme(word)
+
 
 		return stem + number + case
 
@@ -42,7 +44,7 @@ class Inflector:
 	def stem(self, word):
 		group = word.group
 		vowels = word.vowels
-		word = self.av(word.word, self.avRules[word.av])
+		word = word.word 
 		strlen = len(word)
 
 				
@@ -96,32 +98,60 @@ class Inflector:
 		else:
 			return word[:strlen-1] 
 
-	def caseMorpheme(self, lastLetter, group, vowels):
-		if group < 7:
-			return lastLetter + 'n'
-		elif group == 7:
-			return 'en'
-		elif group < 16:
-			return lastLetter + 'n'
-		elif group == 16:
-			return vowels[0] + 'n'
-		elif group < 22:
-			return lastLetter + 'n'
-		elif group == 22:
-			return '\'n'
-		elif group < 34:
-			return 'en'
-		elif group < 38:
-			return vowels[0] + 'n'
-		elif group < 41:
-			return 'en'
-		elif group == 41 or group == 44:
-			return vowels[0] + vowels[0] + 'n'
-		elif group < 47:
-			return 'en'
-		elif group < 50:
-			return 'een'
-			
+	def caseMorpheme(self, word):
+		group = word.group
+		lastLetter = self.lastLetter(word.word, 1)
+		vowels = word.vowels
+		
+		if word.partOfSpeech == 'obj':
+			if group < 7:
+				return lastLetter + 'n'
+			elif group == 7:
+				return 'en'
+			elif group < 16:
+				return lastLetter + 'n'
+			elif group == 16:
+				return vowels[0] + 'n'
+			elif group < 22:
+				return lastLetter + 'n'
+			elif group == 22:
+				return '\'n'
+			elif group < 34:
+				return 'en'
+			elif group < 38:
+				return vowels[0] + 'n'
+			elif group < 41:
+				return 'en'
+			elif group == 41 or group == 44:
+				return vowels[0] + vowels[0] + 'n'
+			elif group < 47:
+				return 'en'
+			elif group < 50:
+				return 'een'
+		elif word.partOfSpeech == 'adv':
+			ret = '' 
+			if group == 7:
+				ret += 'ess'
+			elif group == 16:
+				ret += vowels[0] + 'ss'
+			elif group < 22:
+				ret += lastLetter + 'ss'
+			elif group == 22:
+				ret += '\'ss'
+			elif group < 34:
+				ret += 'ess'
+			elif group < 38:
+				ret += vowels[0] + 'ss'
+			elif group < 41:
+				ret += 'ess'
+			elif group == 41 or group == 44:
+				ret += vowels[0] + vowels[0] + 'ss'
+			elif group < 47:
+				ret += 'ess'
+			elif group < 50:
+				ret += 'ee'
+
+			return ret + vowels[0]	
 		return ''
 
 	def tempusMorpheme(self, lastLetter, group, vowels):
@@ -146,11 +176,10 @@ class Inflector:
 		
 		if rule is None:
 			return word
-		rule = str(rule)
-		ind = str.find(word, rule[0])
+		ind = str.rfind(word, rule[0])
 		if ind == -1:
-			ind = str.find(word, rule[1])
-			return word[:ind] + rule[0] + word[ind+len(rule[1]):]
+			ind = str.rfind(word, rule[1])
+			return word[:ind] + rule[0] + word[ind-1+len(rule[1]):]
 		return word[:ind] + rule[1] + word[ind+len(rule[0]):]
 
 
