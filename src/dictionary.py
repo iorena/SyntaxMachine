@@ -12,11 +12,8 @@ class Dictionary:
 			( {}, {},  {},  {},  {},  {},  {},  {},  {} ),
 			( {}, {},  {},  {},  {},  {},  {},  {},  {} ),
 
-			 )
-			
+            )
 
-
-	
 
 	def findWord(self, word):
 		return word in self.dictionary[self.hash(word)][self.hash(word[1:])]

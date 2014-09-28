@@ -7,15 +7,16 @@ class Generator:
 
 	conjunctions = [ 'ja',
 			'kun',
-			 'mutta',
+			'että',
+             'mutta',
 			'jos',
 			'vaikka' ]
-		
 
-	def __init__(self, verbs, nouns, adjs):
+	def __init__(self, verbs, nouns, adjs, advbs):
 		self.verbs = verbs
 		self.nouns = nouns
 		self.adjectives = adjs
+		self.adverbs = advbs
 		rnd.seed()
 
 
@@ -23,42 +24,50 @@ class Generator:
 		length = rnd.randint(1, 3)
 		sentence = ''
 
-	
+
 		for x in range(length):
 			if x > 0:
-				sentence += ' ' + self.conjunctions[rnd.randint(0, len(self.conjunctions)-1)] + ' '
+				sentence += self.conjunctions[rnd.randint(0, len(self.conjunctions)-1)] + ' '
 			np = self.createNounPhrase('subj')
-			
+
 			vp = self.createVerb()
 
-			npp = self.createNounPhrase('obj')
+			if vp.transitive:
+				npp = self.createNounPhrase('obj')
+			else:
+				npp = self.createNounPhrase('adv')
 			advp = ''
- 
+
 			if rnd.randint(0,6) > 3:
 				advp = self.createNounPhrase('adv')
-			
-			if x == 0:
-				sentence += ' '.join((np.capitalize(), vp.word, npp, advp))
-			else:
-				sentence += ' '.join((np, vp.word, npp, advp))
 
-		print sentence	
+			if x == 0:
+				sentence += ' '.join((np.capitalize(), vp.word, npp, advp)) + ' '
+			else:
+				sentence += ' '.join((np, vp.word, npp, advp)) + ' '
+
+		print sentence.encode('utf-8')
 
 
 
 	def createNounPhrase(self, pos):
 		ind = rnd.randint(0, len(self.nouns)-1)
 		word = self.nouns[ind]
-		np = Noun(word, pos, rnd.randint(0, 1)) 
+		np = Noun(word, pos, rnd.randint(0, 1))
+		word = np.word
+		if rnd.randint(0, 6) > 5:
+			word = self.createPossessorNoun().word + ' ' + word
 		if rnd.randint(0, 6) > 4:
-			np = self.createAdjective(np.partOfSpeech, np.plural).word + ' ' + np.word
-		elif rnd.randint(0, 6) > 3:
-			np = self.createNounPhrase('obj').word + ' ' + np.word
-		else:
-			np = np.word
+			word = self.createAdjective(np.partOfSpeech, np.plural).word + ' ' + word
 
-		return np
 
+		return word
+
+
+	def createPossessorNoun(self):
+		ind = rnd.randint(0, len(self.nouns)-1)
+		word = self.nouns[ind]
+		return Noun(word, 'obj', 0)
 
 	def createVerb(self):
 		ind = rnd.randint(0, len(self.verbs)-1)
@@ -69,3 +78,4 @@ class Generator:
 		ind = rnd.randint(0, len(self.adjectives)-1)
 		word = self.adjectives[ind]
 		return Noun(word, pos, plural)
+
