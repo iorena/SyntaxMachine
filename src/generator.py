@@ -5,77 +5,82 @@ from wordclasses import *
 
 class Generator:
 
-	conjunctions = [ 'ja',
-			'kun',
-			'että',
-             'mutta',
-			'jos',
-			'vaikka' ]
+    conjunctions = [ 'ja',
+            'kun',
+            'että',
+            'mutta',
+            'jos',
+            'vaikka' ]
 
-	def __init__(self, verbs, nouns, adjs, advbs):
-		self.verbs = verbs
-		self.nouns = nouns
-		self.adjectives = adjs
-		self.adverbs = advbs
-		rnd.seed()
-
-
-	def generate(self):
-		length = rnd.randint(1, 3)
-		sentence = ''
+    def __init__(self, verbs, nouns, adjs, advbs, auxVerbs):
+        self.verbs = verbs
+        self.nouns = nouns
+        self.adjectives = adjs
+        self.adverbs = advbs
+        self.auxVerbs = auxVerbs
+        rnd.seed()
 
 
-		for x in range(length):
-			if x > 0:
-				sentence += self.conjunctions[rnd.randint(0, len(self.conjunctions)-1)] + ' '
-			np = self.createNounPhrase('subj')
+    def generate(self):
+        length = rnd.randint(1, 2)
+        phrase = { }
 
-			vp = self.createVerb()
+        for x in range(length):
+            if x > 0:
+                print self.conjunctions[rnd.randint(0, len(self.conjunctions)-1)] + ' '
 
-			if vp.transitive:
-				npp = self.createNounPhrase('obj')
-			else:
-				npp = self.createNounPhrase('adv')
-			advp = ''
+            self.createNounPhrase('subj', phrase)
+            self.createVerbPhrase(phrase)
 
-			if rnd.randint(0,6) > 3:
-				advp = self.createNounPhrase('adv')
+            if phrase['pred'].transitive:
+                self.createNounPhrase('obj', phrase)
+            else:
+                self.createNounPhrase('adv', phrase)
 
-			if x == 0:
-				sentence += ' '.join((np.capitalize(), vp.word, npp, advp)) + ' '
-			else:
-				sentence += ' '.join((np, vp.word, npp, advp)) + ' '
+            if rnd.randint(0,6) > 3:
+                self.createNounPhrase('adv', phrase)
 
-		print sentence.encode('utf-8')
-
+            self.printPhrase(phrase)
+            phrase = { }
 
 
-	def createNounPhrase(self, pos):
-		ind = rnd.randint(0, len(self.nouns)-1)
-		word = self.nouns[ind]
-		np = Noun(word, pos, rnd.randint(0, 1))
-		word = np.word
-		if rnd.randint(0, 6) > 5:
-			word = self.createPossessorNoun().word + ' ' + word
-		if rnd.randint(0, 6) > 4:
-			word = self.createAdjective(np.partOfSpeech, np.plural).word + ' ' + word
+    def createNounPhrase(self, pos, phrase):
+        ind = rnd.randint(0, len(self.nouns)-1)
+        word = self.nouns[ind]
+        np = Noun(word, pos, rnd.randint(0, 1))
+        if not phrase.has_key(pos):
+            phrase[pos] = np
+
+        if rnd.randint(0, 6) > 5:
+            phrase['nattr'+np.partOfSpeech] = self.createPossessorNoun()
+        if rnd.randint(0, 6) > 4:
+            phrase['aattr'+np.partOfSpeech] = self.createAdjective(np.partOfSpeech, np.plural)
 
 
-		return word
+    def createPossessorNoun(self):
+        ind = rnd.randint(0, len(self.nouns)-1)
+        word = self.nouns[ind]
+        return Noun(word, 'obj', 0)
+
+    def createVerbPhrase(self, phrase):
+        if rnd.randint(0, 6) > 4:   #verb phrase with auxillary verb
+            word = self.auxVerbs[rnd.randint(0, len(self.auxVerbs)-1)]
+            phrase['pred'] = Verb(word, 'pred', 0)
+            ind = rnd.randint(0, len(self.verbs)-1)
+            word = self.verbs[ind]
+            phrase['infv'] = Verb(word, 'infv', 0)
+
+        else:                   #plain old lonely predicate
+            ind = rnd.randint(0, len(self.verbs)-1)
+            word = self.verbs[ind]
+            phrase['pred'] = Verb(word, 'pred', 0)
 
 
-	def createPossessorNoun(self):
-		ind = rnd.randint(0, len(self.nouns)-1)
-		word = self.nouns[ind]
-		return Noun(word, 'obj', 0)
+    def createAdjective(self, pos, plural):
+        ind = rnd.randint(0, len(self.adjectives)-1)
+        word = self.adjectives[ind]
+        return Noun(word, pos, plural)
 
-	def createVerb(self):
-		ind = rnd.randint(0, len(self.verbs)-1)
-		word = self.verbs[ind]
-		return Verb(word)
-
-	def createAdjective(self, pos, plural):
-		ind = rnd.randint(0, len(self.adjectives)-1)
-		word = self.adjectives[ind]
-		return Noun(word, pos, plural)
-
+    def printPhrase(self, phrase):
+        for x in phrase.values():
+            print x.word + ' '

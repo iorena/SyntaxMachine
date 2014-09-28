@@ -1,5 +1,10 @@
 class Semantics:
 
-	weights = [('animate', 1), ('abstract', 1), ('natural', 1), ('mass noun', 1)]
+    weights = (         #probabilities of: being the subject of a sentence
+                        #of being in the locative cases
+                        #what else?
 
-	
+
+
+                )
+

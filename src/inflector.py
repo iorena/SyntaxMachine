@@ -1,53 +1,45 @@
 # coding=utf8
+from astevaihtelu import AV
+
 class Inflector:
 
 
     def __init__(self):
-        self.word = 'penis'
+        self.word = ''
+        self.AV = AV()
 
-    avRules = { 'X': None,
-            'A': ('kk', 'k'),
-            'B': ('pp', 'p'),
-            'C': ('tt', 't'),
-            'D': ('k', ''),
-            'E': ('p', 'v'),
-            'F': ('t', 'd'),
-            'G': ('nk', 'ng'),
-            'H': ('mp', 'mm'),
-            'I': ('lt', 'll'),
-            'J': ('nt', 'nn'),
-            'K': ('rt', 'rr'),
-            'L': ('k', 'j'),
-            'M': ('k', 'v') }
-
-    def inflect(self, word):
-        if word.partOfSpeech == 'subj':
+    def inflect(self, word):        #for nouns
+        self.word = word
+        if word.partOfSpeech == 'subj' or word.partOfSpeech == 'infv': #and not word.plural:
             return word.word
 
-        if word.partOfSpeech == 'obj' or word.partOfSpeech == 'adv':
-            word.word = self.av(word.word, self.avRules[word.av])
-        stem = self.stem(word)
+        if word.partOfSpeech == 'obj' or word.partOfSpeech == 'adv' or word.partOfSpeech == 'pred':
+            word.word = self.AV.av(word)
+
+        stem = self.stem()
 
         number = ''  # self.numberMorphemes(word[len(word)-1], word.group)
-        case = self.caseMorpheme(word)
+        case = self.caseMorpheme()
 
 
         return stem + number + case
 
-    def conjugate(self, word):
-        stem = self.stem(word)
+    def conjugate(self, word):      #for verbs
+        self.word = word
+        stem = self.stem()
         return stem + self.tempusMorpheme(self.lastLetter(word.word, 2), word.group, word.A)
+
 
     def lastLetter(self, word, i):
         return word[len(word)-i]
 
-    def stem(self, word):
-        group = word.group
-        wword = word.word
+    def stem(self):
+        group = self.word.group
+        wword = self.word.word
         strlen = len(wword)
 
 
-        if group == 4 or group == 14 or group == 41 or group == 44 or group == 47 or group == 68:
+        if group == 14 or group == 41 or group == 44 or group == 47 or group == 68:
             return wword[:strlen-2]
         if group == 16:
             return wword[:strlen-2] + 'm'
@@ -62,7 +54,7 @@ class Inflector:
         if group == 33:
             return wword[:strlen-1] + 'm'
         if group == 34:
-            return wword[:strlen-2] + word.O + 'm'
+            return wword[:strlen-2] + self.word.O + 'm'
         if group == 35:
             return 'lämpim'
         if group == 36 or group == 37:
@@ -92,13 +84,14 @@ class Inflector:
         elif group == 72:
             return wword[:strlen-2] + 'ne'
         elif group == 73:
-            return wword[:strlen-2] + word.A
+            return wword[:strlen-2] + self.word.A
         elif group == 74 or group == 75:
-            return wword[:strlen-2] + word.A
+            return wword[:strlen-2] + self.word.A
         else:
             return wword[:strlen-1]
 
-    def caseMorpheme(self, word):
+    def caseMorpheme(self):
+        word = self.word
         group = word.group
         lastLetter = self.lastLetter(word.word, 1)
 
@@ -173,20 +166,6 @@ class Inflector:
         if group == 75:
             return A
         return 'e'
-
-
-    def av(self, word, rule):		#try longer rule first, if it doesn't fit, assume
-        #short form in nominative
-        if rule is None:
-            return word
-
-        ind = str.rfind(word, rule[0])
-
-        if ind == -1:
-            ind = str.rfind(word, rule[1])
-            return word[:ind] + rule[0] + word[ind+len(rule[1]):]
-        return word[:ind] + rule[1] + word[ind+len(rule[0]):]
-
 
     def vowel(self, char):
         return char in ['a', 'e', 'i', 'o', 'u', 'y', u'ä', u'ö']

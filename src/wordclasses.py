@@ -26,13 +26,23 @@ class Word:
             self.O = 'ö'
             self.U = 'y'
 
+    def checkAv(self):
+        if str.find(self.word, self.inflector.AV.avRules[self.av][0]) == -1:
+            return False
+        else:
+            return True
+
 class Verb(Word):
 
-    def __init__(self, word):
+    def __init__(self, word, pos, plural):
         self.group = word[1]
+        self.partOfSpeech = pos
+        self.plural = plural
         self.transitive = True
         self.av= word[2]
         self.word = word[0]
+        if self.av != 'X':
+            self.siav = self.checkAv()          #katsotaan onko perusmuodossa heikko vai vahva muoto
         self.harmony()
         self.checkReflexiveness()
         print self.group
@@ -50,7 +60,8 @@ class Verb(Word):
                 return
         self.transitive = not D.findWord(unrefl)
         if not self.transitive:
-            print 'omg, a reflective verb!'
+            print 'omg, a reflexive verb!'
+
 
 
 class Noun(Word):
@@ -62,6 +73,8 @@ class Noun(Word):
         self.group = word[1]
         self.av = word[2]
         self.partOfSpeech = pos
+        if self.av != 'X':
+            self.siav = self.checkAv()          #katsotaan onko perusmuodossa heikko vai vahva muoto
         self.harmony()
         if plural == 1:
             self.plural = True
