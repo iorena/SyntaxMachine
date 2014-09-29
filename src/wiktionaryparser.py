@@ -38,6 +38,6 @@ words.sort()
 f = codecs.open('sanaluokat.txt', 'w')
 
 for line in words:
-    f.write(line[0] + '#' + line[1] + line[2] + '\n')
+    f.write(line[0] + '#' + line[1] + '#' + line[2] + '\n')
 
 f.close()

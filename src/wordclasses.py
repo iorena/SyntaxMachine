@@ -34,6 +34,8 @@ class Word:
 
 class Verb(Word):
 
+    type = 'verb'
+
     def __init__(self, word, pos, plural):
         self.group = word[1]
         self.partOfSpeech = pos
@@ -50,6 +52,10 @@ class Verb(Word):
 
 
     def checkReflexiveness(self):
+        if self.word[-2:] == self.U + self.A:
+            self.transitive = False
+            print 'yay'
+            return
         D = Dictionary()
         ind = str.find(self.word, str(self.U + 't' + self.U))  #take UtU part out of word and see if it's still a word
         unrefl = self.word[:ind-1] + self.A

@@ -40,7 +40,7 @@ def loadDictionary():
         elif group == 99:
             adverbs.append((word, group, av))
 
-        dictionary.putWord(word, group, av)
+        dictionary.putWord(word, group, av, '')
 
 def loadWordClasses():
 
@@ -52,9 +52,10 @@ def loadWordClasses():
             index = str.find(line, '#')
             word = line[:index].decode('utf-8')
             wordc = line[index+1:index+5].decode('utf-8')
-
+            index = str.find(line, '#', index+5)
+            keywords = line[index+1:]
             if dictionary.findWord(word):
-                classDictionary.putWord(word, wordc, '')
+                classDictionary.putWord(word, wordc, '', keywords)
                 wordclasses.append((word, wordc))
 
 
@@ -91,3 +92,5 @@ while (1):
 
     if x == 'quit':
         break
+    elif x[:6] == 'define':
+        print dictionary.defineWord(x[7:])

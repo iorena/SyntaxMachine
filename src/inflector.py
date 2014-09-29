@@ -10,10 +10,10 @@ class Inflector:
 
     def inflect(self, word):        #for nouns
         self.word = word
-        if word.partOfSpeech == 'subj' or word.partOfSpeech == 'infv': #and not word.plural:
+        if word.partOfSpeech[:4] == 'subj': #and not word.plural:
             return word.word
 
-        if word.partOfSpeech == 'obj' or word.partOfSpeech == 'adv' or word.partOfSpeech == 'pred':
+        if word.partOfSpeech[:3] == 'obj' or word.partOfSpeech[:4] == 'advl':
             word.word = self.AV.av(word)
 
         stem = self.stem()
@@ -21,17 +21,19 @@ class Inflector:
         number = ''  # self.numberMorphemes(word[len(word)-1], word.group)
         case = self.caseMorpheme()
 
-
         return stem + number + case
 
     def conjugate(self, word):      #for verbs
+        if word.partOfSpeech == 'infv':
+            return word.word
         self.word = word
+        self.word.word = self.AV.av(word)
         stem = self.stem()
         return stem + self.tempusMorpheme(self.lastLetter(word.word, 2), word.group, word.A)
 
 
     def lastLetter(self, word, i):
-        return word[len(word)-i]
+        return word[-i]
 
     def stem(self):
         group = self.word.group
@@ -39,7 +41,7 @@ class Inflector:
         strlen = len(wword)
 
 
-        if group == 14 or group == 41 or group == 44 or group == 47 or group == 68:
+        if group == 14 or group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
             return wword[:strlen-2]
         if group == 16:
             return wword[:strlen-2] + 'm'
@@ -88,6 +90,8 @@ class Inflector:
         elif group == 74 or group == 75:
             return wword[:strlen-2] + self.word.A
         else:
+            if not self.vowel(wword[-1]):
+                return wword
             return wword[:strlen-1]
 
     def caseMorpheme(self):
@@ -122,7 +126,7 @@ class Inflector:
                 return 'en'
             elif group < 50:
                 return 'een'
-        elif word.partOfSpeech == 'adv':
+        elif word.partOfSpeech == 'advl':
             ret = ''
             if group == 5 or group == 6:
                 ret += 'iss'

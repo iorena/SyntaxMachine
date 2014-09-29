@@ -20,6 +20,7 @@ class Generator:
         self.auxVerbs = auxVerbs
         rnd.seed()
 
+    flags = {'kari' : 0}
 
     def generate(self):
         length = rnd.randint(1, 2)
@@ -32,13 +33,18 @@ class Generator:
             self.createNounPhrase('subj', phrase)
             self.createVerbPhrase(phrase)
 
-            if phrase['pred'].transitive:
+            if phrase.has_key('infv'):
+                if phrase['infv'].transitive:
+                    self.createNounPhrase('obj', phrase)
+                else:
+                    self.createNounPhrase('advl', phrase)
+            elif phrase['pred'].transitive:
                 self.createNounPhrase('obj', phrase)
             else:
-                self.createNounPhrase('adv', phrase)
+                self.createNounPhrase('advl', phrase)
 
             if rnd.randint(0,6) > 3:
-                self.createNounPhrase('adv', phrase)
+                self.createNounPhrase('advl', phrase)
 
             self.printPhrase(phrase)
             phrase = { }
@@ -52,9 +58,9 @@ class Generator:
             phrase[pos] = np
 
         if rnd.randint(0, 6) > 5:
-            phrase['nattr'+np.partOfSpeech] = self.createPossessorNoun()
+            phrase[np.partOfSpeech + 'nattr'] = self.createPossessorNoun()
         if rnd.randint(0, 6) > 4:
-            phrase['aattr'+np.partOfSpeech] = self.createAdjective(np.partOfSpeech, np.plural)
+            phrase[np.partOfSpeech + 'aattr'] = self.createAdjective(np.partOfSpeech, np.plural)
 
 
     def createPossessorNoun(self):
@@ -82,5 +88,10 @@ class Generator:
         return Noun(word, pos, plural)
 
     def printPhrase(self, phrase):
-        for x in phrase.values():
-            print x.word + ' '
+        wordlist = []
+        pos = ('subjnattr', 'subjaattr', 'subj', 'pred', 'infv', 'objnattr', 'objaattr', 'obj', 'advlnattr', 'advlaattr', 'advl')
+        for x in pos:
+            if phrase.has_key(x):
+                wordlist.append(phrase[x].word)
+        print ' '.join(wordlist)
+

@@ -21,14 +21,14 @@ class AV:
 
         if rule is None:
             return word.word
-        if not word.siav:
+        if word.av =='D' or word.av == 'E' or word.av == 'F' or word.av == 'I' or word.av == 'J' or (word.type == 'verb' and not word.siav):
             return word.word
 
         ind = str.rfind(word.word, rule[0])
 
         if ind == -1:
-            ind = str.rfind(word.word, rule[1])
+            ind = str.rfind(word.word, rule[1], len(word.word)/2)
             return word.word[:ind] + rule[0] + word.word[ind+len(rule[1]):]
         return word.word[:ind] + rule[1] + word.word[ind+len(rule[0]):]
 
-
+#todo: add check for aika->aian type mistake
