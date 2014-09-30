@@ -15,6 +15,9 @@ newVerbs = []
 nouns = []
 dictionary = Dictionary()
 
+u = Util()
+
+
 def loadDictionary():
 
     data = XML.parse('../kotus-sanalista_v1/kotus-sanalista_v1.xml')
@@ -46,6 +49,7 @@ def loadWordClasses():
 
     wordclasses = []
     classDictionary = Dictionary()
+    wordsWithDef = []
 
     with codecs.open('sanaluokat.txt', 'r') as lines:
         for line in lines:
@@ -55,9 +59,11 @@ def loadWordClasses():
             index = str.find(line, '#', index+5)
             keywords = line[index+1:]
             if dictionary.findWord(word):
-                classDictionary.putWord(word, wordc, '', keywords)
+                classDictionary.putWord(word, wordc, '', u.parseKeywords(keywords))
+                wordsWithDef.append((word, u.parseKeywords(keywords)))
                 wordclasses.append((word, wordc))
 
+    #u.writeDown(wordsWithDef)
 
     for entry in nounDictionary:
 
@@ -79,7 +85,6 @@ print 'Loading dictionary...'
 loadDictionary()
 print 'Loading wiktionary data...'
 loadWordClasses()
-u = Util()
 
 print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives')
 

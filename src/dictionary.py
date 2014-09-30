@@ -25,6 +25,12 @@ class Dictionary:
         return self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)
 
     def defineWord(self, word):
+        definition = self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)[2]
+        if definition is None:
+            return 'No definition'
+        return ' '.join(definition)
+
+    def varjoDefineWord(self, word):
         return self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)[2]
 
     def hash(self, word):
