@@ -51,11 +51,12 @@ def loadWordClasses():
     classDictionary = Dictionary()
     wordsWithDef = []
 
-    with codecs.open('sanaluokat.txt', 'r') as lines:
+    with codecs.open('sanaluokat.txt', 'r', 'utf-8') as lines:
         for line in lines:
+            line = line.encode('utf-8')
             index = str.find(line, '#')
-            word = line[:index].decode('utf-8')
-            wordc = line[index+1:index+5].decode('utf-8')
+            word = line[:index]
+            wordc = line[index+1:index+5]
             index = str.find(line, '#', index+5)
             keywords = line[index+1:]
             if dictionary.findWord(word):

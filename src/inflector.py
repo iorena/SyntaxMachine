@@ -172,4 +172,5 @@ class Inflector:
         return 'e'
 
     def vowel(self, char):
-        return char in ['a', 'e', 'i', 'o', 'u', 'y', u'ä', u'ö']
+        return char in ['a', 'e', 'i', 'o', 'u', 'y', u'ä'.encode('utf-8'), u'ö'.encode('utf-8')]
+

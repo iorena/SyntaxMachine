@@ -22,8 +22,8 @@ class Word:
             self.O = 'o'
             self.U = 'u'
         else:
-            self.A = 'ä'
-            self.O = 'ö'
+            self.A = u'ä'.encode('utf-8')
+            self.O = u'ö'.encode('utf-8')
             self.U = 'y'
 
     def checkAv(self):
@@ -42,7 +42,10 @@ class Verb(Word):
         self.plural = plural
         self.transitive = True
         self.av= word[2]
-        self.word = word[0]
+        if type(word[0]) is str:
+            self.word = word[0]
+        else:
+            self.word = word[0].encode('utf-8')
         if self.av != 'X':
             self.siav = self.checkAv()          #katsotaan onko perusmuodossa heikko vai vahva muoto
         self.harmony()
@@ -60,7 +63,7 @@ class Verb(Word):
         ind = str.find(self.word, str(self.U + 't' + self.U))  #take UtU part out of word and see if it's still a word
         unrefl = self.word[:ind-1] + self.A
         if ind == -1:
-            ind = str.find(self.word, str('t' + self.U + self.A), len(self.word)-3)     #make tUA to dA change
+            ind = str.find(self.word, 't' + self.U + self.A, len(self.word)-3)     #make tUA to dA change
             unrefl = self.word[:len(self.word)-4] + 'd' + self.A
             if ind == -1:
                 return
