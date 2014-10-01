@@ -21,8 +21,9 @@ class AV:
 
         if rule is None:
             return word.word
-        if word.av =='D' or word.av == 'E' or word.av == 'F' or word.av == 'I' or word.av == 'J' or (word.type == 'verb' and not word.siav):
+        if word.type == 'verb' and word.siav:
             return word.word
+
 
         ind = str.rfind(word.word, rule[0])
 

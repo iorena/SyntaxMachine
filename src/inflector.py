@@ -76,7 +76,7 @@ class Inflector:
         elif group > 61 and group < 66:
             return wword[:strlen-2]
         elif group == 66 or group == 67:
-            return wword[:strlen-2] + 'e'
+            return wword[:strlen-2]
         elif group == 69:
             return wword[:strlen-1] + 'se'
         elif group == 70:
@@ -90,6 +90,7 @@ class Inflector:
         elif group == 74 or group == 75:
             return wword[:strlen-2] + self.word.A
         else:
+            print wword[-1]
             if not self.vowel(wword[-1]):
                 return wword
             return wword[:strlen-1]
@@ -169,6 +170,8 @@ class Inflector:
             return A
         if group == 75:
             return A
+        if group == 67:
+            return 'ee'
         return 'e'
 
     def vowel(self, char):
