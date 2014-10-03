@@ -1,3 +1,4 @@
+import re
 import codecs
 
 class Util:
@@ -13,7 +14,7 @@ class Util:
     def parseKeywords(self, keywords):
         keyList = []
         read = 0
-        while True:
+        while True:         #parse words inside [[]]
             ind = str.find(keywords, '[[', read)
             if ind == -1:
                 break
@@ -26,6 +27,16 @@ class Util:
             read = endInd2
             keyList.append(keywords[ind+2:endInd])
         return keyList
+
+    def parseKeySentence(self, keywords):
+        read = 0
+        ind = str.find(keywords, '\'\'', read)
+        if ind == -1:
+            return ''
+        endInd = str.rfind(keywords, '\'\'', ind+1)
+        read = endInd
+        sentence = keywords[ind+2:endInd]
+        return sentence.replace('[', '').replace(']', '')
 
     def writeDown(self, wordList):
         f = open('definitions1.txt', 'w')

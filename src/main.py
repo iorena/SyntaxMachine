@@ -43,7 +43,7 @@ def loadDictionary():
         elif group == 99:
             adverbs.append((word, group, av))
 
-        dictionary.putWord(word, group, av, '')
+        dictionary.putWord(word, group, av, '', '')
 
 def loadWordClasses():
 
@@ -60,7 +60,7 @@ def loadWordClasses():
             index = str.find(line, '#', index+5)
             keywords = line[index+1:]
             if dictionary.findWord(word):
-                classDictionary.putWord(word, wordc, '', u.parseKeywords(keywords))
+                classDictionary.putWord(word, wordc, '', u.parseKeywords(keywords), u.parseKeySentence(keywords))
                 wordsWithDef.append((word, u.parseKeywords(keywords)))
                 wordclasses.append((word, wordc))
 
@@ -100,3 +100,5 @@ while (1):
         break
     elif x[:6] == 'define':
         print dictionary.defineWord(x[7:])
+    elif x[:8] == 'sentence':
+        print dictionary.getSentence(x[9:])

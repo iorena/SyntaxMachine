@@ -29,7 +29,7 @@ class Inflector:
         self.word = word
         self.word.word = self.AV.av(word)
         stem = self.stem()
-        return stem + self.tempusMorpheme(self.word.lastLetter, word.group, word.A)
+        return stem + self.tempusMorpheme(word, stem)
 
 
     def lastLetter(self, word, i):
@@ -158,9 +158,11 @@ class Inflector:
         return ret
 
 
-    def tempusMorpheme(self, lastLetter, group, A):
+    def tempusMorpheme(self, word, stem):
+        group = word.group
+        A = word.A
         if group == 52:
-            return lastLetter
+            return stem[-1]
         if group > 52 and group < 58:
             return A
         if group == 61:

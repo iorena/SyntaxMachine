@@ -18,8 +18,8 @@ class Dictionary:
     def findWord(self, word):
         return word in self.dictionary[self.hash(word)][self.hash(word[1:])]
 
-    def putWord(self, word, group, pv, keywords):
-        self.dictionary[self.hash(word)][self.hash(word[1:])][word] = (group, pv, keywords)
+    def putWord(self, word, group, pv, keywords, keysentence):
+        self.dictionary[self.hash(word)][self.hash(word[1:])][word] = (group, pv, keywords, keysentence)
 
     def getEntry(self, word):
         return self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)
@@ -29,6 +29,13 @@ class Dictionary:
         if definition is None:
             return 'No definition'
         return ' '.join(definition)
+
+    def getSentence(self, word):
+        sentence = self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)[3]
+        if sentence is None:
+            return 'No sentence'
+        return sentence
+
 
     def varjoDefineWord(self, word):
         return self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)[2]
