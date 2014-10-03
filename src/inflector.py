@@ -13,7 +13,7 @@ class Inflector:
         if word.partOfSpeech[:4] == 'subj': #and not word.plural:
             return word.word
 
-        if word.partOfSpeech[:3] == 'obj' or word.partOfSpeech[:4] == 'advl':
+        if word.partOfSpeech[:3] == 'obj' or word.partOfSpeech[:] == 'advl':
             word.word = self.AV.av(word)
 
         stem = self.stem()
@@ -29,7 +29,7 @@ class Inflector:
         self.word = word
         self.word.word = self.AV.av(word)
         stem = self.stem()
-        return stem + self.tempusMorpheme(self.lastLetter(word.word, 2), word.group, word.A)
+        return stem + self.tempusMorpheme(self.word.lastLetter, word.group, word.A)
 
 
     def lastLetter(self, word, i):
@@ -40,94 +40,96 @@ class Inflector:
         wword = self.word.word
         strlen = len(wword)
 
+        if self.word.lastLetter == 'ä':     #take into account broken char left over from ä
+            wword = wword[:-1]
 
         if group == 14 or group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
-            return wword[:strlen-2]
+            return wword[:-2]
         if group == 16:
-            return wword[:strlen-2] + 'm'
+            return wword[:-2] + 'm'
         if group == 22 or group == 32 or group == 49:
             return wword
         if group == 27:
-            return wword[:strlen-2] + 'd'
+            return wword[:-2] + 'd'
         if group == 28:
-            return wword[:strlen-2] + 'n'
+            return wword[:-2] + 'n'
         if group == 31:
-            return wword[:strlen-3] + 'hd'
+            return wword[:-3] + 'hd'
         if group == 33:
-            return wword[:strlen-1] + 'm'
+            return wword[:-1] + 'm'
         if group == 34:
-            return wword[:strlen-2] + self.word.O + 'm'
+            return wword[:-2] + self.word.O + 'm'
         if group == 35:
             return 'lämpim'
         if group == 36 or group == 37:
-            return wword[:strlen-1] + 'mm'
+            return wword[:-1] + 'mm'
         if group == 38:
-            return wword[:strlen-3] + 's'
+            return wword[:-3] + 's'
         if group == 39:
-            return wword[:strlen-1] + 'ks'
+            return wword[:-1] + 'ks'
         if group == 40:
-            return wword[:strlen-1] + 'd'
+            return wword[:-1] + 'd'
         if group == 42:
-            return wword[:strlen-1] + 'h'
+            return wword[:-1] + 'h'
         if group == 45 or group == 46:
-            return wword[:strlen-1] + 'nn'
+            return wword[:-1] + 'nn'
         if group < 50:
-            return wword[:strlen-1]
+            return wword[:-1]
         elif group > 61 and group < 66:
-            return wword[:strlen-2]
+            return wword[:-2]
         elif group == 66 or group == 67:
-            return wword[:strlen-2]
+            return wword[:-2]
         elif group == 69:
-            return wword[:strlen-1] + 'se'
+            return wword[:-1] + 'se'
         elif group == 70:
-            return wword[:strlen-3] + 'kse'
+            return wword[:-3] + 'kse'
         elif group == 71:
-            return wword[:strlen-3] + 'ke'
+            return wword[:-3] + 'ke'
         elif group == 72:
-            return wword[:strlen-2] + 'ne'
+            return wword[:-2] + 'ne'
         elif group == 73:
-            return wword[:strlen-2] + self.word.A
+            return wword[:-2] + self.word.A
         elif group == 74 or group == 75:
-            return wword[:strlen-2] + self.word.A
+            return wword[:-2] + self.word.A
         else:
-            print wword[-1]
-            if not self.vowel(wword[-1]):
+            if not self.vowel(self.word.lastLetter):
                 return wword
-            return wword[:strlen-1]
+            return wword[:-1]
 
     def caseMorpheme(self):
+        uword = self.word.word
         word = self.word
         group = word.group
-        lastLetter = self.lastLetter(word.word, 1)
+        ret = ''
 
         if word.partOfSpeech == 'obj':
             if group == 5 or group == 6:
-                return 'in'
+                ret += 'in'
             elif group < 7:
-                return lastLetter + 'n'
+                ret += word.lastLetter + 'n'
             elif group == 7:
-                return 'en'
+                ret += 'en'
             elif group < 16:
-                return lastLetter + 'n'
+                ret += word.lastLetter + 'n'
             elif group == 16:
-                return word.A + 'n'
+                ret += word.A + 'n'
             elif group < 22:
-                return lastLetter + 'n'
+                ret += word.lastLetter + 'n'
             elif group == 22:
-                return '\'n'
+                ret += '\'n'
             elif group < 34:
-                return 'en'
+                ret += 'en'
             elif group < 38:
-                return word.A + 'n'
+                ret += word.A + 'n'
             elif group < 41:
-                return 'en'
+                ret += 'en'
             elif group == 41 or group == 44:
-                return word.A + word.A + 'n'
+                ret += word.A + word.A + 'n'
             elif group < 47:
-                return 'en'
+                ret += 'en'
             elif group < 50:
-                return 'een'
-        elif word.partOfSpeech == 'advl':
+                ret += 'een'
+        elif self.word.partOfSpeech == 'advl':
             ret = ''
             if group == 5 or group == 6:
                 ret += 'iss'
@@ -136,7 +138,7 @@ class Inflector:
             elif group == 16:
                 ret += word.A + 'ss'
             elif group < 22:
-                ret += lastLetter + 'ss'
+                ret += word.lastLetter + 'ss'
             elif group == 22:
                 ret += '\'ss'
             elif group < 34:
@@ -153,7 +155,8 @@ class Inflector:
                 ret += 'eess'
 
             return ret + word.A
-        return ''
+        return ret
+
 
     def tempusMorpheme(self, lastLetter, group, A):
         if group == 52:
@@ -175,5 +178,5 @@ class Inflector:
         return 'e'
 
     def vowel(self, char):
-        return char in ['a', 'e', 'i', 'o', 'u', 'y', u'ä'.encode('utf-8'), u'ö'.encode('utf-8')]
+        return char in ['a', 'e', 'i', 'o', 'u', 'y', 'ä', 'ö']
 

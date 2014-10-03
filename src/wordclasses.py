@@ -22,8 +22,8 @@ class Word:
             self.O = 'o'
             self.U = 'u'
         else:
-            self.A = u'ä'.encode('utf-8')
-            self.O = u'ö'.encode('utf-8')
+            self.A = 'ä'
+            self.O = 'ö'
             self.U = 'y'
 
     def checkAv(self):
@@ -38,6 +38,10 @@ class Verb(Word):
 
     def __init__(self, word, pos, plural):
         self.group = word[1]
+        if str.find(word[0][-2:], 'ä') != -1:
+            self.lastLetter = 'ä'
+        else:
+            self.lastLetter = word[0][-1]
         self.partOfSpeech = pos
         self.plural = plural
         self.transitive = True
@@ -45,7 +49,7 @@ class Verb(Word):
         if type(word[0]) is str:
             self.word = word[0]
         else:
-            self.word = word[0].encode('utf-8')
+            self.word = word[0]
         if self.av != 'X':
             self.siav = self.checkAv()          #katsotaan onko perusmuodossa heikko vai vahva muoto
         self.harmony()
@@ -55,16 +59,22 @@ class Verb(Word):
 
 
     def checkReflexiveness(self):
-        if self.word[-2:] == self.U + self.A:
+        word = self.word
+        if self.lastLetter == 'ä':
+            if word[-3] == self.U:
+                self.transitive = False
+                print 'yay'
+                return
+        if word[-2:] == self.U + self.A:
             self.transitive = False
             print 'yay'
             return
         D = Dictionary()
         ind = str.find(self.word, str(self.U + 't' + self.U))  #take UtU part out of word and see if it's still a word
-        unrefl = self.word[:ind-1] + self.A
+        unrefl = word[:ind-1] + self.A
         if ind == -1:
             ind = str.find(self.word, 't' + self.U + self.A, len(self.word)-3)     #make tUA to dA change
-            unrefl = self.word[:len(self.word)-4] + 'd' + self.A
+            unrefl = word[:len(self.word)-4] + 'd' + self.A
             if ind == -1:
                 return
         self.transitive = not D.findWord(unrefl)
@@ -79,6 +89,10 @@ class Noun(Word):
 
     def __init__(self, word, pos, plural):
         self.word = word[0]
+        if str.find(word[0][-2:], 'ä') != -1:
+            self.lastLetter = 'ä'
+        else:
+            self.lastLetter = word[0][-1]
         self.group = word[1]
         self.av = word[2]
         self.partOfSpeech = pos
