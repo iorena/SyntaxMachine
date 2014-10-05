@@ -29,7 +29,7 @@ class Inflector:
         self.word = word
         self.word.word = self.AV.av(word)
         stem = self.stem()
-        return stem + self.tempusMorpheme(word, stem)
+        return stem + self.tenseMorpheme(word, stem)
 
 
     def lastLetter(self, word, i):
@@ -73,6 +73,8 @@ class Inflector:
             return wword[:-1] + 'h'
         if group == 45 or group == 46:
             return wword[:-1] + 'nn'
+        if group >= 53 and group < 58:
+            return wword[:-2]
         if group < 50:
             return wword[:-1]
         elif group > 61 and group < 66:
@@ -158,26 +160,40 @@ class Inflector:
         return ret
 
 
-    def tempusMorpheme(self, word, stem):
+    def tenseMorpheme(self, word, stem):
         group = word.group
         A = word.A
-        if group == 52:
-            return stem[-1]
-        if group > 52 and group < 58:
-            return A
-        if group == 61:
-            return 'i'
-        if group >= 62 and group < 66:
-            return ''
-        if group == 68 or group == 73:
-            return ''
-        if group == 74 or group == 76:
-            return A
-        if group == 75:
-            return A
-        if group == 67:
-            return 'ee'
-        return 'e'
+        if word.tense == 'pres':
+            if group == 52:
+                return stem[-1]
+            if group > 52 and group < 58:
+                return A + A
+            if group == 61:
+                return 'i'
+            if group >= 62 and group < 66:
+                return ''
+            if group == 68 or group == 73:
+                return ''
+            if group == 74 or group == 76:
+                return A
+            if group == 75:
+                return A
+            if group == 67:
+                return 'ee'
+            return 'e'
+        elif word.tense == 'past':
+            if group == 56 or group == 57:
+                return 'oi'
+            if group == 61 or group == 62 or group == 68:
+                return ''
+            if group == 63 or group == 64:
+                return stem[2] + 'i'
+            if group < 73:
+                return 'i'
+            if group < 99:
+                return 'si'
+
+
 
     def vowel(self, char):
         return char in ['a', 'e', 'i', 'o', 'u', 'y', 'ä', 'ö']

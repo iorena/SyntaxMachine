@@ -69,17 +69,21 @@ class Generator:
         return Noun(word, 'obj', 0)
 
     def createVerbPhrase(self, phrase):
+        if rnd.randint(0, 1) > 0:
+            tense = 'past'
+        else:
+            tense = 'pres'
         if rnd.randint(0, 6) > 4:   #verb phrase with auxillary verb
             word = self.auxVerbs[rnd.randint(0, len(self.auxVerbs)-1)]
-            phrase['pred'] = Verb(word, 'pred', 0)
+            phrase['pred'] = Verb(word, 'pred', 0, tense)
             ind = rnd.randint(0, len(self.verbs)-1)
             word = self.verbs[ind]
-            phrase['infv'] = Verb(word, 'infv', 0)
+            phrase['infv'] = Verb(word, 'infv', 0, tense)
 
         else:                   #plain old lonely predicate
             ind = rnd.randint(0, len(self.verbs)-1)
             word = self.verbs[ind]
-            phrase['pred'] = Verb(word, 'pred', 0)
+            phrase['pred'] = Verb(word, 'pred', 0, tense)
 
 
     def createAdjective(self, pos, plural):

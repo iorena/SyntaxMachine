@@ -36,8 +36,9 @@ class Verb(Word):
 
     type = 'verb'
 
-    def __init__(self, word, pos, plural):
+    def __init__(self, word, pos, plural, tense):
         self.group = word[1]
+        self.tense = tense
         if str.find(word[0][-2:], 'ä') != -1:
             self.lastLetter = 'ä'
         else:
