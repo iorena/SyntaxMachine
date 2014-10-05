@@ -9,10 +9,12 @@ from dictionary import Dictionary
 verbDictionary = []
 nounDictionary = []
 adjectives = []
+classDictionary = Dictionary()
 adverbs = []
 newAdverbs = []
 newVerbs = []
 nouns = []
+names = []
 dictionary = Dictionary()
 
 u = Util()
@@ -48,7 +50,6 @@ def loadDictionary():
 def loadWordClasses():
 
     wordclasses = []
-    classDictionary = Dictionary()
     wordsWithDef = []
 
     with codecs.open('sanaluokat.txt', 'r', 'utf-8') as lines:
@@ -63,6 +64,8 @@ def loadWordClasses():
                 classDictionary.putWord(word, wordc, '', u.parseKeywords(keywords), u.parseKeySentence(keywords))
                 wordsWithDef.append((word, u.parseKeywords(keywords)))
                 wordclasses.append((word, wordc))
+            elif wordc == 'Eris':
+                names.append(word)
 
     #u.writeDown(wordsWithDef)
 
@@ -82,12 +85,28 @@ def loadWordClasses():
                 newAdverbs.append((entry[0], entry[1], entry[2], wordc[0]))
 
 
+def parseKeySentence():
+    for table in classDictionary.dictionary:
+        for dictionary in table:
+            for entry in dictionary:
+                sentence = classDictionary.getSentence(entry)
+                if not sentence == '':
+                    for word in list(sentence):
+                        if classDictionary.findWord(word):
+                            classDictionary.putRelatedWord(entry, word)
+                        elif classDictionary.findWord(word[:-1]):
+                            classDictionary.putRelatedWord(entry, word[:-1])
+
+
+
 print 'Loading dictionary...'
 loadDictionary()
 print 'Loading wiktionary data...'
 loadWordClasses()
+print 'Listing semantic information...'
+parseKeySentence()
 
-print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives')
+print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives') + (len(names), 'names')
 
 
 g = Generator(verbDictionary, nouns, adjectives, newAdverbs, u.auxVerbs())

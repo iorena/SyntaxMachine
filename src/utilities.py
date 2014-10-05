@@ -47,3 +47,4 @@ class Util:
                 continue
             f.write(word + ' ' + definition + '\n')
         f.close()
+

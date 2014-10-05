@@ -43,6 +43,10 @@ class Inflector:
         if self.word.lastLetter == 'ä':     #take into account broken char left over from ä
             wword = wword[:-1]
 
+
+        if self.word.type == 'verb' and self.word.tense == 'past' and (group == 63 or group == 64):
+            return wword[0]
+
         if group == 14 or group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
             return wword[:-2]
         if group == 16:
@@ -82,7 +86,7 @@ class Inflector:
         elif group == 66 or group == 67:
             return wword[:-2]
         elif group == 69:
-            return wword[:-1] + 'se'
+            return wword[:-1] + 's'
         elif group == 70:
             return wword[:-3] + 'kse'
         elif group == 71:
@@ -90,9 +94,9 @@ class Inflector:
         elif group == 72:
             return wword[:-2] + 'ne'
         elif group == 73:
-            return wword[:-2] + self.word.A
+            return wword[:-2]
         elif group == 74 or group == 75:
-            return wword[:-2] + self.word.A
+            return wword[:-2]
         else:
             if not self.vowel(self.word.lastLetter):
                 return wword
@@ -172,13 +176,13 @@ class Inflector:
                 return 'i'
             if group >= 62 and group < 66:
                 return ''
-            if group == 68 or group == 73:
+            if group == 68:
                 return ''
-            if group == 74 or group == 76:
+            if group == 73 or group == 74 or group == 76:
                 return A
             if group == 75:
-                return A
-            if group == 67:
+                return A + A
+            if group == 67 or group == 69:
                 return 'ee'
             return 'e'
         elif word.tense == 'past':
@@ -187,7 +191,7 @@ class Inflector:
             if group == 61 or group == 62 or group == 68:
                 return ''
             if group == 63 or group == 64:
-                return stem[2] + 'i'
+                return word.word[2] + 'i'
             if group < 73:
                 return 'i'
             if group < 99:

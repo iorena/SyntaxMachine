@@ -69,7 +69,7 @@ class Generator:
         return Noun(word, 'obj', 0)
 
     def createVerbPhrase(self, phrase):
-        if rnd.randint(0, 1) > 0:
+        if rnd.randint(0, 1) >= 0:
             tense = 'past'
         else:
             tense = 'pres'

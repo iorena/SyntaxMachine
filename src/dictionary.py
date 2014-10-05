@@ -21,6 +21,9 @@ class Dictionary:
     def putWord(self, word, group, pv, keywords, keysentence):
         self.dictionary[self.hash(word)][self.hash(word[1:])][word] = (group, pv, keywords, keysentence)
 
+    def putRelatedWord(self, word, relatedWord):
+        self.dictionary[self.hash(word)][self.hash(word[1:])][word][2].append(relatedWord)
+
     def getEntry(self, word):
         return self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)
 
@@ -33,7 +36,7 @@ class Dictionary:
     def getSentence(self, word):
         sentence = self.dictionary[self.hash(word)][self.hash(word[1:])].get(word)[3]
         if sentence is None:
-            return 'No sentence'
+            return ''
         return sentence
 
 
