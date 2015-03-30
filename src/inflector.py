@@ -38,10 +38,9 @@ class Inflector:
     def stem(self):
         group = self.word.group
         wword = self.word.word
+        print "type of word is "
+        print type(wword)
         strlen = len(wword)
-
-        if self.word.lastLetter == 'ä':     #take into account broken char left over from ä
-            wword = wword[:-1]
 
 
         if self.word.type == 'verb' and self.word.tense == 'past' and (group == 63 or group == 64):

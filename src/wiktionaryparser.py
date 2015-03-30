@@ -6,7 +6,7 @@ from array import array
 
 words = []
 
-with codecs.open('../resources/fiwiktionary-20140920-pages-meta-current.xml', 'r', 'utf-8') as infile:
+with codecs.open('../resources/recovered_data.xml', 'r', 'utf-8') as infile:
     word = 'penis'
     wordClass = 'penis'
 

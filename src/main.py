@@ -4,6 +4,7 @@ import xml.etree.ElementTree as XML
 from array import array
 from generator import Generator
 from utilities import Util
+from unicodeutils import UnicodeUtils
 from dictionary import Dictionary
 
 verbDictionary = []
@@ -18,11 +19,12 @@ names = []
 dictionary = Dictionary()
 
 u = Util()
+ucode = UnicodeUtils()
 
 
 def loadDictionary():
 
-    data = XML.parse('../kotus-sanalista_v1/kotus-sanalista_v1.xml')
+    data = XML.parse('../resources/kotus-sanalista_v1/kotus-sanalista_v1.xml')
     root = data.getroot()
 
     for child in root:
@@ -35,7 +37,9 @@ def loadDictionary():
         if t.find('av') is not None:
             av = t.find('av').text
 
-        word = child.find('s').text.encode('utf-8')
+        word = child.find('s').text.encode('utf-8') #some words are unicode, some ascii, so let's convert them all into unicode
+        word = word.decode('utf-8')
+
         if word[0] == '-':
             continue
         if group < 50:
@@ -46,6 +50,7 @@ def loadDictionary():
             adverbs.append((word, group, av))
 
         dictionary.putWord(word, group, av, '', '')
+
 
 def loadWordClasses():
 
@@ -106,7 +111,7 @@ loadWordClasses()
 print 'Listing semantic information...'
 parseKeySentence()
 
-print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives') + (len(names), 'names')
+print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives') + (len(names), 'names') #let's see how much stuff we managed to parse into our dictionary
 
 
 g = Generator(verbDictionary, nouns, adjectives, newAdverbs, u.auxVerbs())
