@@ -41,7 +41,7 @@ class Verb(Word):
     def __init__(self, word, pos, plural, tense):
         self.group = word[1]
         self.tense = tense
-        self.lastLetter = self.ucode.lastLetter(word)
+        self.lastLetter = self.ucode.lastLetter(word[0])
         self.partOfSpeech = pos
         self.plural = plural
         self.transitive = True
@@ -86,7 +86,7 @@ class Noun(Word):
 
     def __init__(self, word, pos, plural):
         self.word = word[0]
-        self.lastLetter = self.ucode.lastLetter(word)
+        self.lastLetter = self.ucode.lastLetter(self.word)
         self.group = word[1]
         self.av = word[2]
         self.partOfSpeech = pos

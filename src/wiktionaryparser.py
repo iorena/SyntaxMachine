@@ -7,8 +7,8 @@ from array import array
 words = []
 
 with codecs.open('../resources/recovered_data.xml', 'r', 'utf-8') as infile:
-    word = 'penis'
-    wordClass = 'penis'
+    word = ''
+    wordClass = '
 
     for line in infile:
         line = line.encode('utf-8')

@@ -1,5 +1,6 @@
 # coding=utf8
 from astevaihtelu import AV
+from unicodeutils import UnicodeUtils
 
 class Inflector:
 
@@ -7,6 +8,7 @@ class Inflector:
     def __init__(self):
         self.word = ''
         self.AV = AV()
+        self.ucode = UnicodeUtils()
 
     def inflect(self, word):        #for nouns
         self.word = word
@@ -32,14 +34,9 @@ class Inflector:
         return stem + self.tenseMorpheme(word, stem)
 
 
-    def lastLetter(self, word, i):
-        return word[-i]
-
     def stem(self):
         group = self.word.group
         wword = self.word.word
-        print "type of word is "
-        print type(wword)
         strlen = len(wword)
 
 
@@ -49,33 +46,33 @@ class Inflector:
         if group == 14 or group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
             return wword[:-2]
         if group == 16:
-            return wword[:-2] + 'm'
+            return wword[:-2] + u'm'
         if group == 22 or group == 32 or group == 49:
             return wword
         if group == 27:
-            return wword[:-2] + 'd'
+            return wword[:-2] + u'd'
         if group == 28:
-            return wword[:-2] + 'n'
+            return wword[:-2] + u'n'
         if group == 31:
-            return wword[:-3] + 'hd'
+            return wword[:-3] + u'hd'
         if group == 33:
-            return wword[:-1] + 'm'
+            return wword[:-1] + u'm'
         if group == 34:
-            return wword[:-2] + self.word.O + 'm'
+            return wword[:-2] + self.word.O + u'm'
         if group == 35:
-            return 'lämpim'
+            return u'lämpim'
         if group == 36 or group == 37:
-            return wword[:-1] + 'mm'
+            return wword[:-1] + u'mm'
         if group == 38:
-            return wword[:-3] + 's'
+            return wword[:-3] + u's'
         if group == 39:
-            return wword[:-1] + 'ks'
+            return wword[:-1] + u'ks'
         if group == 40:
-            return wword[:-1] + 'd'
+            return wword[:-1] + u'd'
         if group == 42:
-            return wword[:-1] + 'h'
+            return wword[:-1] + u'h'
         if group == 45 or group == 46:
-            return wword[:-1] + 'nn'
+            return wword[:-1] + u'nn'
         if group >= 53 and group < 58:
             return wword[:-2]
         if group < 50:
@@ -85,21 +82,27 @@ class Inflector:
         elif group == 66 or group == 67:
             return wword[:-2]
         elif group == 69:
-            return wword[:-1] + 's'
+            return wword[:-1] + u's'
         elif group == 70:
-            return wword[:-3] + 'kse'
+            return wword[:-3] + u'kse'
         elif group == 71:
-            return wword[:-3] + 'ke'
+            return wword[:-3] + u'ke'
         elif group == 72:
-            return wword[:-2] + 'ne'
+            return wword[:-2] + u'ne'
         elif group == 73:
             return wword[:-2]
         elif group == 74 or group == 75:
             return wword[:-2]
         else:
-            if not self.vowel(self.word.lastLetter):
+            newWord = self.ucode.slice(wword, 0, -1)
+            print newWord
+            vowel = self.vowel(self.word.lastLetter)
+            print vowel
+            if not vowel:
                 return wword
-            return wword[:-1]
+            newWord = self.ucode.slice(wword, 0, -1)
+            print newWord
+            return newWord
 
     def caseMorpheme(self):
         uword = self.word.word
@@ -109,55 +112,55 @@ class Inflector:
 
         if word.partOfSpeech == 'obj':
             if group == 5 or group == 6:
-                ret += 'in'
+                ret += u'in'
             elif group < 7:
-                ret += word.lastLetter + 'n'
+                ret += word.lastLetter + u'n'
             elif group == 7:
-                ret += 'en'
+                ret += u'en'
             elif group < 16:
-                ret += word.lastLetter + 'n'
+                ret += word.lastLetter + u'n'
             elif group == 16:
-                ret += word.A + 'n'
+                ret += word.A + u'n'
             elif group < 22:
-                ret += word.lastLetter + 'n'
+                ret += word.lastLetter + u'n'
             elif group == 22:
-                ret += '\'n'
+                ret += u'\'n'
             elif group < 34:
-                ret += 'en'
+                ret += u'en'
             elif group < 38:
-                ret += word.A + 'n'
+                ret += word.A + u'n'
             elif group < 41:
-                ret += 'en'
+                ret += u'en'
             elif group == 41 or group == 44:
-                ret += word.A + word.A + 'n'
+                ret += word.A + word.A + u'n'
             elif group < 47:
-                ret += 'en'
+                ret += u'en'
             elif group < 50:
-                ret += 'een'
+                ret += u'een'
         elif self.word.partOfSpeech == 'advl':
             ret = ''
             if group == 5 or group == 6:
-                ret += 'iss'
+                ret += u'iss'
             elif group == 7:
-                ret += 'ess'
+                ret += u'ess'
             elif group == 16:
-                ret += word.A + 'ss'
+                ret += word.A + u'ss'
             elif group < 22:
-                ret += word.lastLetter + 'ss'
+                ret += word.lastLetter + u'ss'
             elif group == 22:
-                ret += '\'ss'
+                ret += u'\'ss'
             elif group < 34:
-                ret += 'ess'
+                ret += u'ess'
             elif group < 38:
-                ret += word.A + 'ss'
+                ret += word.A + u'ss'
             elif group < 41:
-                ret += 'ess'
+                ret += u'ess'
             elif group == 41 or group == 44:
-                ret += word.A + word.A + 'ss'
+                ret += word.A + word.A + u'ss'
             elif group < 47:
-                ret += 'ess'
+                ret += u'ess'
             elif group < 50:
-                ret += 'eess'
+                ret += u'eess'
 
             return ret + word.A
         return ret
@@ -172,7 +175,7 @@ class Inflector:
             if group > 52 and group < 58:
                 return A + A
             if group == 61:
-                return 'i'
+                return u'i'
             if group >= 62 and group < 66:
                 return ''
             if group == 68:
@@ -182,22 +185,38 @@ class Inflector:
             if group == 75:
                 return A + A
             if group == 67 or group == 69:
-                return 'ee'
-            return 'e'
+                return u'ee'
+            return u'e'
         elif word.tense == 'past':
             if group == 56 or group == 57:
-                return 'oi'
+                return u'oi'
             if group == 61 or group == 62 or group == 68:
                 return ''
             if group == 63 or group == 64:
-                return word.word[2] + 'i'
+                return word.word[2] + u'i'
             if group < 73:
-                return 'i'
+                return u'i'
             if group < 99:
-                return 'si'
+                return u'si'
 
 
 
     def vowel(self, char):
-        return char in ['a', 'e', 'i', 'o', 'u', 'y', 'ä', 'ö']
+        if char == u'a':
+            return True
+        if char == u'e':
+            return True
+        if char == u'i':
+            return True
+        if char == u'o':
+            return True
+        if char == u'u':
+            return True
+        if char == u'y':
+            return True
+        if char == u'ä':
+            return True
+        if char == u'ö':
+            return True
+        return False
 
