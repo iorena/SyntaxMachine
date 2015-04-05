@@ -26,6 +26,7 @@ def loadDictionary():
 
     data = XML.parse('../resources/kotus-sanalista_v1/kotus-sanalista_v1.xml')
     root = data.getroot()
+    numNouns = 0
 
     for child in root:
         t = child.find('t')
@@ -44,12 +45,15 @@ def loadDictionary():
             continue
         if group < 50:
             nounDictionary.append((word, group, av))
+            numNouns += 1
         elif group > 51 and group < 77:
             verbDictionary.append((word, group, av))
         elif group == 99:
             adverbs.append((word, group, av))
 
         dictionary.putWord(word, group, av, '', '')
+
+    print 'number of nouns: ' + str(numNouns)
 
 
 def loadWordClasses():
@@ -82,6 +86,7 @@ def loadWordClasses():
                 nouns.append((entry[0], entry[1], entry[2], wordc[0]))
             elif wordc == "Adje" or wordc == 'Nume':
                 adjectives.append((entry[0], entry[1], entry[2], wordc[0]))
+
     for entry in adverbs:
 
         if classDictionary.findWord(entry[0]):

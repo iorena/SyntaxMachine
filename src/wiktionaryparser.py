@@ -6,9 +6,11 @@ from array import array
 
 words = []
 
+
 with codecs.open('../resources/recovered_data.xml', 'r', 'utf-8') as infile:
     word = ''
-    wordClass = '
+    wordClass = ''
+    nouns = 0
 
     for line in infile:
         line = line.encode('utf-8')
@@ -19,26 +21,36 @@ with codecs.open('../resources/recovered_data.xml', 'r', 'utf-8') as infile:
             word = line[7:endIndex]
             continue
 
-        text = '<text xml:space="preserve">==Suomi'
-        if line[:len(text)] == text:
+        text = '==Suomi'
+        altText = '<text xml:space="preserve">==Suomi'
+        if line[:len(text)] == text or line[:len(altText)] == altText:
             line = next(infile).encode('utf-8')
             if line[:3] == '===':
                 endIndex = str.find(line, '===', 1)
                 wordClass = line[3:endIndex]
                 description = ''
-                line = next(infile).encode('utf-8')
-                if line[:2] == '{{':
+                firstChar = ''
+                while firstChar != '=':
                     line = next(infile).encode('utf-8')
-                    line = next(infile).encode('utf-8')
-                    if line[0] == '#':
-                        description = line[2:]
+                    firstChar = line[0]
+                    if firstChar == '#':
+                        description += line[1:]
+
                 words.append((word, wordClass, description))
+                if wordClass[2] == 'b':
+                    nouns += 1
+
+    print nouns
 
 
 words.sort()
 f = codecs.open('sanaluokat.txt', 'w', 'utf-8')
 
 for line in words:
+    print type(line[2])
+    print line[2]
+    if type(line[2]) == unicode:
+        line[2] = line[2].encode('utf-8')
     writeLine = line[0].decode('utf-8') + '#' + line[1].decode('utf-8') + '#' + line[2].decode('utf-8') + '\n'
     f.write(writeLine)
 

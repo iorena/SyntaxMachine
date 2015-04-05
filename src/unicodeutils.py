@@ -20,6 +20,8 @@ class UnicodeUtils:
     def rfind(self, haystack, needle, endInd = 0):
         haystack = list(haystack)
         needle = list(needle)
+        if len(needle) == 0:
+            return -1
         for i in range(len(haystack)-1, endInd, -1):
             if haystack[i] == needle[0]:
                 index = i
@@ -42,7 +44,6 @@ class UnicodeUtils:
         print type(word)
         charlist = list(word)
         last = charlist[len(charlist)-1]
-        print last
         return last
 
     def slice(self, word, startInd, endInd):
