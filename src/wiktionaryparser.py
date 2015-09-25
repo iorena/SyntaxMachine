@@ -47,8 +47,6 @@ words.sort()
 f = codecs.open('sanaluokat.txt', 'w', 'utf-8')
 
 for line in words:
-    print type(line[2])
-    print line[2]
     if type(line[2]) == unicode:
         line[2] = line[2].encode('utf-8')
     writeLine = line[0].decode('utf-8') + '#' + line[1].decode('utf-8') + '#' + line[2].decode('utf-8') + '\n'

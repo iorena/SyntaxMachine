@@ -69,10 +69,11 @@ class Generator:
         return Noun(word, 'obj', 0)
 
     def createVerbPhrase(self, phrase):
-        if rnd.randint(0, 1) >= 0:
+        if rnd.randint(0, 1) >= 0:      #random tempus
             tense = 'past'
         else:
             tense = 'pres'
+
         if rnd.randint(0, 6) > 4:   #verb phrase with auxillary verb
             word = self.auxVerbs[rnd.randint(0, len(self.auxVerbs)-1)]
             phrase['pred'] = Verb(word, 'pred', 0, tense)

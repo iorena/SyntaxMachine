@@ -15,15 +15,16 @@ class Inflector:
         if word.partOfSpeech[:4] == 'subj': #and not word.plural:
             return word.word
 
-        if word.partOfSpeech[:3] == 'obj' or word.partOfSpeech[:] == 'advl':
-            word.word = self.AV.av(word)
-
         stem = self.stem()
 
         number = ''  # self.numberMorphemes(word[len(word)-1], word.group)
         case = self.caseMorpheme()
 
-        return stem + number + case
+        word.word = stem + number + case
+
+        if word.partOfSpeech[:3] == 'obj' or word.partOfSpeech[:] == 'advl':
+            return self.AV.av(word)
+        return word.word
 
     def conjugate(self, word):      #for verbs
         if word.partOfSpeech == 'infv':
@@ -43,7 +44,7 @@ class Inflector:
         if self.word.type == 'verb' and self.word.tense == 'past' and (group == 63 or group == 64):
             return wword[0]
 
-        if group == 14 or group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
+        if group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
             return wword[:-2]
         if group == 16:
             return wword[:-2] + u'm'
@@ -76,7 +77,10 @@ class Inflector:
         if group >= 53 and group < 58:
             return wword[:-2]
         if group < 50:
-            return wword[:-1]
+            if self.vowel(self.word.lastLetter):
+                return wword[:-1]
+            else:
+                return wword
         elif group > 61 and group < 66:
             return wword[:-2]
         elif group == 66 or group == 67:
@@ -202,21 +206,6 @@ class Inflector:
 
 
     def vowel(self, char):
-        if char == u'a':
-            return True
-        if char == u'e':
-            return True
-        if char == u'i':
-            return True
-        if char == u'o':
-            return True
-        if char == u'u':
-            return True
-        if char == u'y':
-            return True
-        if char == u'ä':
-            return True
-        if char == u'ö':
+        if char in [u'a', u'e', u'i', u'o', u'u', u'y', u'ä', u'ö']:
             return True
         return False
-
