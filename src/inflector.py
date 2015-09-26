@@ -12,13 +12,16 @@ class Inflector:
 
     def inflect(self, word):        #for nouns
         self.word = word
-        if word.partOfSpeech[:4] == 'subj': #and not word.plural:
+        if word.partOfSpeech[:4] == 'subj' and word.case != 'part': #and not word.plural:
             return word.word
 
         stem = self.stem()
 
         number = ''  # self.numberMorphemes(word[len(word)-1], word.group)
-        case = self.caseMorpheme()
+        if word.case == 'nom':
+            case = self.caseMorpheme()
+        elif word.case == 'part':
+            case = self.partitiveCaseMorpheme()
 
         word.word = stem + number + case
 
@@ -44,43 +47,51 @@ class Inflector:
         if self.word.type == 'verb' and self.word.tense == 'past' and (group == 63 or group == 64):
             return wword[0]
 
-        if group == 41 or group == 44 or group == 47 or group == 68 or group == 62:
-            return wword[:-2]
+        if group == 41 or group == 44:
+            return wword[:-2] + self.word.A + self.word.A
+        if group == 47:
+            return wword[:-2] + u'ee'
+        if group == 7 or group in range(23, 33):
+            return wword[:-1] + u'e'
+        if group == 48:
+            return wword[:-1] + u'ee'
         if group == 16:
-            return wword[:-2] + u'm'
-        if group == 22 or group == 32 or group == 49:
-            return wword
+            return wword[:-2] + u'm' + self.word.A
+        if group == 22:
+            return wword + u'\''
         if group == 27:
-            return wword[:-2] + u'd'
+            return wword[:-2] + u'de'
         if group == 28:
-            return wword[:-2] + u'n'
+            return wword[:-2] + u'ne'
         if group == 31:
-            return wword[:-3] + u'hd'
+            return wword[:-3] + u'hde'
+        if group == 32:
+            return wword + u'e'
         if group == 33:
-            return wword[:-1] + u'm'
+            return wword[:-1] + u'me'
         if group == 34:
-            return wword[:-2] + self.word.O + u'm'
+            return wword[:-2] + self.word.O + u'm' + self.word.A
         if group == 35:
-            return u'lämpim'
+            return u'lämpimä'
         if group == 36 or group == 37:
-            return wword[:-1] + u'mm'
+            return wword[:-1] + u'mm' + self.word.A
         if group == 38:
-            return wword[:-3] + u's'
+            return wword[:-3] + u'se'
         if group == 39:
-            return wword[:-1] + u'ks'
+            return wword[:-1] + u'kse'
         if group == 40:
-            return wword[:-1] + u'd'
+            return wword[:-1] + u'de'
         if group == 42:
-            return wword[:-1] + u'h'
+            return wword[:-1] + u'he'
         if group == 45 or group == 46:
-            return wword[:-1] + u'nn'
+            return wword[:-1] + u'nne'
         if group >= 53 and group < 58:
             return wword[:-2]
         if group < 50:
             if self.vowel(self.word.lastLetter):
-                return wword[:-1]
-            else:
                 return wword
+            else:
+                return wword + u'i'
         elif group > 61 and group < 66:
             return wword[:-2]
         elif group == 66 or group == 67:
@@ -92,20 +103,17 @@ class Inflector:
         elif group == 71:
             return wword[:-3] + u'ke'
         elif group == 72:
-            return wword[:-2] + u'ne'
+            return wword[:-2] + u'n'
         elif group == 73:
             return wword[:-2]
         elif group == 74 or group == 75:
             return wword[:-2]
         else:
             newWord = self.ucode.slice(wword, 0, -1)
-            print newWord
             vowel = self.vowel(self.word.lastLetter)
-            print vowel
             if not vowel:
                 return wword
             newWord = self.ucode.slice(wword, 0, -1)
-            print newWord
             return newWord
 
     def caseMorpheme(self):
@@ -115,60 +123,38 @@ class Inflector:
         ret = ''
 
         if word.partOfSpeech == 'obj':
-            if group == 5 or group == 6:
-                ret += u'in'
-            elif group < 7:
-                ret += word.lastLetter + u'n'
-            elif group == 7:
-                ret += u'en'
-            elif group < 16:
-                ret += word.lastLetter + u'n'
-            elif group == 16:
-                ret += word.A + u'n'
-            elif group < 22:
-                ret += word.lastLetter + u'n'
+            if group < 22:
+                ret += u'n'
             elif group == 22:
                 ret += u'\'n'
-            elif group < 34:
-                ret += u'en'
-            elif group < 38:
-                ret += word.A + u'n'
-            elif group < 41:
-                ret += u'en'
-            elif group == 41 or group == 44:
-                ret += word.A + word.A + u'n'
-            elif group < 47:
-                ret += u'en'
             elif group < 50:
-                ret += u'een'
+                ret += u'n'
         elif self.word.partOfSpeech == 'advl':
-            ret = ''
-            if group == 5 or group == 6:
-                ret += u'iss'
-            elif group == 7:
-                ret += u'ess'
-            elif group == 16:
-                ret += word.A + u'ss'
-            elif group < 22:
-                ret += word.lastLetter + u'ss'
-            elif group == 22:
-                ret += u'\'ss'
-            elif group < 34:
-                ret += u'ess'
-            elif group < 38:
-                ret += word.A + u'ss'
-            elif group < 41:
-                ret += u'ess'
-            elif group == 41 or group == 44:
-                ret += word.A + word.A + u'ss'
-            elif group < 47:
-                ret += u'ess'
-            elif group < 50:
-                ret += u'eess'
-
-            return ret + word.A
+            return u'ss' + word.A
         return ret
 
+    def partitiveCaseMorpheme(self):
+        uword = self.word.word
+        word = self.word
+        group = word.group
+        ret = ''
+
+        if group in [3, 17, 18, 19, 23, 24]:
+            ret += u't' + word.A
+        elif group == 22:
+            ret += u'\'t' + word.A
+        elif group < 26:
+            ret += word.A
+        elif group < 43:
+            ret += u't' + word.A
+        elif group < 47 or group == 48:
+            ret += u'tt' + word.A
+        elif group < 48:
+            ret += u'utt' + word.A
+        elif group == 49:
+            ret += u't' + word.A
+
+        return ret
 
     def tenseMorpheme(self, word, stem):
         group = word.group

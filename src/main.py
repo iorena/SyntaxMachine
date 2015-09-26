@@ -10,6 +10,7 @@ from dictionary import Dictionary
 verbDictionary = []
 nounDictionary = []
 adjectives = []
+numerals = []
 classDictionary = Dictionary()
 adverbs = []
 newAdverbs = []
@@ -84,8 +85,10 @@ def loadWordClasses():
             wordc = classDictionary.getEntry(entry[0])[0]
             if wordc == 'Subs':
                 nouns.append((entry[0], entry[1], entry[2], wordc[0]))
-            elif wordc == "Adje" or wordc == 'Nume':
+            elif wordc == "Adje":
                 adjectives.append((entry[0], entry[1], entry[2], wordc[0]))
+            elif wordc == 'Nume':
+                numerals.append((entry[0], entry[1], entry[2], wordc[0]))
 
     for entry in adverbs:
 
@@ -108,26 +111,25 @@ def parseKeySentence():
                             classDictionary.putRelatedWord(entry, word[:-1])
 
 
+def load():
+    print 'Loading dictionary...'
+    loadDictionary()
+    print 'Loading wiktionary data...'
+    loadWordClasses()
+    print 'Listing semantic information...'
+    parseKeySentence()
 
-print 'Loading dictionary...'
-loadDictionary()
-print 'Loading wiktionary data...'
-loadWordClasses()
-print 'Listing semantic information...'
-parseKeySentence()
+    print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives') + (len(names), 'names') #let's see how much stuff we managed to parse into our dictionary
 
-print (len(verbDictionary), ' verbs') + (len(nouns), ' nouns') + (len(adjectives), ' adjectives') + (len(names), 'names') #let's see how much stuff we managed to parse into our dictionary
+    g = Generator(verbDictionary, nouns, adjectives, newAdverbs, u.auxVerbs(), numerals)
 
-
-g = Generator(verbDictionary, nouns, adjectives, newAdverbs, u.auxVerbs())
-
-while (1):
+def generate():
     g.generate()
-    x = raw_input()
+    #x = raw_input()
 
-    if x == 'quit':
-        break
-    elif x[:6] == 'define':
-        print dictionary.defineWord(x[7:])
-    elif x[:8] == 'sentence':
-        print dictionary.getSentence(x[9:])
+    #if x == 'quit':
+    #    break
+    #elif x[:6] == 'define':
+    #    print dictionary.defineWord(x[7:])
+    #elif x[:8] == 'sentence':
+    #    print dictionary.getSentence(x[9:])

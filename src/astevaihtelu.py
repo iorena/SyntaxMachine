@@ -30,10 +30,9 @@ class AV:
 
 
         if word.av == 'D' and self.ucode.find(word.word, 'aika') != -1: #special case: aika->ajan type change
-                return self.ucode.replace(word.word, 'aika', 'aja')
+            return self.ucode.replace(word.word, 'aika', 'aja')
 
         ind = self.ucode.rfind(word.word, rule[0])
-        print(ind)
 
         if word.type == 'verb' and word.group in [53, 58, 61]:
             return word.word
@@ -41,12 +40,10 @@ class AV:
 
         if ind == -1:
             ind = self.ucode.rfind(word.word, rule[1])
-            print word.word[:ind]
             returnWord = self.ucode.slice(word.word, 0, ind) + rule[0] + self.ucode.slice(word.word, ind+len(rule[1]))
         else:
             returnWord = self.ucode.slice(word.word, 0, ind) + rule[1] + self.ucode.slice(word.word, ind+len(rule[0]))
 
-        print(word.word[:ind])
         if word.av == 'D' and self.ucode.find(returnWord, 'aaa') != -1:
                 return self.ucode.replace(returnWord, 'aaa', 'aa\'a')
         return returnWord

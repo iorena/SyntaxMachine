@@ -41,7 +41,6 @@ class UnicodeUtils:
         return list(word)[index]
 
     def lastLetter(self, word):
-        print type(word)
         charlist = list(word)
         last = charlist[len(charlist)-1]
         return last

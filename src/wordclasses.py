@@ -51,7 +51,6 @@ class Verb(Word):
             self.siav = self.checkAv()          #katsotaan onko perusmuodossa heikko vai vahva muoto
         self.harmony()
         self.checkReflexiveness()
-        print self.group
         self.word = self.inflector.conjugate(self)
 
 
@@ -60,11 +59,9 @@ class Verb(Word):
         if self.ucode.lastLetter(word) == u'ä':
             if word[-3] == self.U:
                 self.transitive = False
-                print 'yay'
                 return
         if word[-2:] == self.U + self.A:
             self.transitive = False
-            print 'yay'
             return
         D = Dictionary()
         ind = self.ucode.find(self.word, str(self.U + 't' + self.U))  #take UtU part out of word and see if it's still a word
@@ -75,8 +72,6 @@ class Verb(Word):
             if ind == -1:
                 return
         self.transitive = not D.findWord(unrefl)
-        if not self.transitive:
-            print 'omg, a reflexive verb!'
 
 
 
@@ -84,8 +79,9 @@ class Noun(Word):
 
     type = 'noun'
 
-    def __init__(self, word, pos, plural):
+    def __init__(self, word, pos, plural, case = 'nom'):
         self.word = word[0]
+        self.case = case
         self.lastLetter = self.ucode.lastLetter(self.word)
         self.group = word[1]
         self.av = word[2]

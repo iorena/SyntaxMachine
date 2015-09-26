@@ -12,12 +12,13 @@ class Generator:
             'jos',
             'vaikka' ]
 
-    def __init__(self, verbs, nouns, adjs, advbs, auxVerbs):
+    def __init__(self, verbs, nouns, adjs, advbs, auxVerbs, numerals):
         self.verbs = verbs
         self.nouns = nouns
         self.adjectives = adjs
         self.adverbs = advbs
         self.auxVerbs = auxVerbs
+        self.numerals = numerals
         rnd.seed()
 
     flags = {'kari' : 0}
@@ -54,14 +55,17 @@ class Generator:
         ind = rnd.randint(0, len(self.nouns)-1)
         word = self.nouns[ind]
         np = Noun(word, pos, rnd.randint(0, 1))
-        if not phrase.has_key(pos):
-            phrase[pos] = np
 
         if rnd.randint(0, 6) > 5:
             phrase[np.partOfSpeech + 'nattr'] = self.createPossessorNoun()
         if rnd.randint(0, 6) > 4:
-            phrase[np.partOfSpeech + 'aattr'] = self.createAdjective(np.partOfSpeech, np.plural)
+            adjective = self.createAdjective(np.partOfSpeech, np.plural)
+            if np.partOfSpeech == 'subj' and adjective[1] == 'num' and adjective[0].lastLetter != 's' and adjective[0] != 'yksi': #numerals, exept 'one' and those ending in 's' which are assumed to be ordinals
+                np = Noun(word, pos, 0, 'part')
+            phrase[np.partOfSpeech + 'aattr'] = adjective[0]
 
+        if not phrase.has_key(pos):
+            phrase[pos] = np
 
     def createPossessorNoun(self):
         ind = rnd.randint(0, len(self.nouns)-1)
@@ -88,9 +92,16 @@ class Generator:
 
 
     def createAdjective(self, pos, plural):
-        ind = rnd.randint(0, len(self.adjectives)-1)
-        word = self.adjectives[ind]
-        return Noun(word, pos, plural)
+        r = rnd.randint(1, 6)
+        if r < 6:
+            ind = rnd.randint(0, len(self.adjectives)-1)
+            word = self.adjectives[ind]
+            return (Noun(word, pos, plural), 'adj')
+        else:
+            ind = rnd.randint(0, len(self.numerals)-1)
+            word = self.numerals[ind]
+            return (Noun(word, pos, plural), 'num')
+
 
     def printPhrase(self, phrase):
         wordlist = []
